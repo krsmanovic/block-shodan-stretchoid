@@ -6,8 +6,8 @@ This is the example of reactive firewall policy that analyzes PTR records of IP 
 
 ## Linux box
 
-- Create ssh key pair (Linux <=> MIkroTik)
-- Save bash file to location of your liking and edit connection parameters and list variables to your liking
+- Create ssh key pair (Linux <=> MikroTik)
+- Save bash file and edit connection parameters and list variables to your liking
 - Add cron job to run daily (or any interval that fits your firewall settings)
 
 ## MikroTik box
