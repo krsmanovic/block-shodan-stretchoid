@@ -31,7 +31,6 @@ add action=drop chain=input-access src-address-list=fw_blacklist_dynamic
 add action=drop chain=input-access src-address-list=martian
 add action=accept chain=input-access src-address-list=fw_allow_access
 add action=accept chain=input-access protocol=icmp
-add action=jump chain=input-access dst-port=500,1701,4500 jump-target=input-vpn protocol=udp
 add action=jump chain=input-access dst-port=1194,1723 jump-target=input-vpn protocol=tcp
 add action=accept chain=input-vpn src-address-list=fw_whitelist
 add action=add-src-to-address-list address-list=fw_blacklist_dynamic address-list-timeout=none-dynamic chain=input-vpn src-address-list=fw_stage3
