@@ -12,7 +12,7 @@ This is the example of reactive firewall policy that analyzes PTR records of IP 
 
 ## MikroTik box
 
-- Create new script user and check if ssh keys work
+- Create new script user and ssh keys
 - Check if your firewall facility matches the bash address list parameters
 
 Other lists are optional, but I've left them in the `mikrotik-fw-example.rsc` file just to illustrate desired positioning of the firewall rules.
