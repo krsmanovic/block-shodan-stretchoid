@@ -1,0 +1,42 @@
+/ip firewall raw
+add action=jump chain=prerouting comment="jump to TCP chain" jump-target=bad_tcp protocol=tcp
+add action=jump chain=prerouting comment="jump to ICMP chain" jump-target=icmp4 protocol=icmp
+add action=drop chain=prerouting comment="UDP port 0" port=0 protocol=udp
+add action=accept chain=icmp4 comment="echo reply" icmp-options=0:0 protocol=icmp
+add action=accept chain=icmp4 comment="echo request" icmp-options=8:0 protocol=icmp
+add action=accept chain=icmp4 comment="port unreachable" icmp-options=3:3 protocol=icmp
+add action=accept chain=icmp4 comment="host unreachable" icmp-options=3:1 protocol=icmp
+add action=accept chain=icmp4 comment="time exceeded " icmp-options=11:0-255 protocol=icmp
+add action=accept chain=icmp4 comment="net unreachable" icmp-options=3:0 protocol=icmp
+add action=accept chain=icmp4 comment="fragmentation needed (pmtu discovery)" icmp-options=3:4 protocol=icmp
+add action=accept chain=icmp4 comment="protocol unreachable" icmp-options=3:2 protocol=icmp
+add action=drop chain=icmp4 comment="drop other icmp" protocol=icmp
+add action=drop chain=bad_tcp comment="TCP flag filter" protocol=tcp tcp-flags=!fin,!syn,!rst,!ack
+add action=drop chain=bad_tcp protocol=tcp tcp-flags=fin,syn
+add action=drop chain=bad_tcp protocol=tcp tcp-flags=fin,rst
+add action=drop chain=bad_tcp protocol=tcp tcp-flags=fin,!ack
+add action=drop chain=bad_tcp protocol=tcp tcp-flags=fin,urg
+add action=drop chain=bad_tcp protocol=tcp tcp-flags=syn,rst
+add action=drop chain=bad_tcp protocol=tcp tcp-flags=rst,urg
+add action=drop chain=bad_tcp comment="TCP port 0" port=0 protocol=tcp
+/ip firewall filter
+add action=accept chain=forward comment="optimize: forward" connection-state=established,related,untracked
+add action=drop chain=forward connection-state=invalid
+add action=accept chain=input comment="optimize: input" connection-state=established,related,untracked
+add action=drop chain=input connection-state=invalid
+add action=jump chain=input comment="access control: wan" in-interface-list=WAN jump-target=input-access
+add action=drop chain=input-access src-address-list=china
+add action=drop chain=input-access src-address-list=fw_blacklist
+add action=drop chain=input-access src-address-list=fw_blacklist_dynamic
+add action=drop chain=input-access src-address-list=martian
+add action=accept chain=input-access src-address-list=fw_allow_access
+add action=accept chain=input-access protocol=icmp
+add action=jump chain=input-access dst-port=500,1701,4500 jump-target=input-vpn protocol=udp
+add action=jump chain=input-access dst-port=1194,1723 jump-target=input-vpn protocol=tcp
+add action=accept chain=input-vpn src-address-list=fw_whitelist
+add action=add-src-to-address-list address-list=fw_blacklist_dynamic address-list-timeout=none-dynamic chain=input-vpn src-address-list=fw_stage3
+add action=add-src-to-address-list address-list=fw_stage3 address-list-timeout=10m chain=input-vpn src-address-list=fw_stage2
+add action=add-src-to-address-list address-list=fw_stage2 address-list-timeout=10m chain=input-vpn src-address-list=fw_stage1
+add action=add-src-to-address-list address-list=fw_stage1 address-list-timeout=2d chain=input-vpn
+add action=accept chain=input-vpn
+add action=drop chain=input-access
