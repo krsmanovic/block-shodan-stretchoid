@@ -15,9 +15,9 @@ This is the example of reactive firewall policy that analyzes PTR records of IP 
 - Create new script user and ssh keys
 - Check if your firewall facility matches the bash address list parameters
 
-Other lists are optional, but I've left them in the `mikrotik-fw-example.rsc` file just to illustrate desired positioning of the firewall rules.
+Other lists are optional, but I've left them in the `mikrotik-fw-example-rsc.txt` file just to illustrate desired positioning of the firewall rules.
 
-## mikrotik-blacklist-result-example.rsc
+## mikrotik-blacklist-result-example-rsc.txt
 
 This is real example extracted from one of my MikroTik boxes.
 
