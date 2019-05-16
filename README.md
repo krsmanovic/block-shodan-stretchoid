@@ -1,4 +1,4 @@
-# Reactive facility for collecting Shodan, Stretchoid, Shadowserver, Onyphie or similar scanning farms IP addresses
+# Reactive facility for collecting Shodan, Stretchoid, Shadowserver, Onyphe or similar scanning farms IP addresses
 
 In case you have VPN server or any kind of publicly open service, I would recommend to filter as much bogus traffic as possible. I would argue that documented and undocumented service scanners fit to that category.
 
