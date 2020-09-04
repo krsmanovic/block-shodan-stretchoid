@@ -28,6 +28,12 @@ file="stage1"
 if [[ ! -d $log_dir ]]; then
   mkdir -p $log_dir
 fi
+if [[ ! -f $log_file  ]]; then
+  touch $log_file
+fi
+if [[ ! -f $log_file_alert  ]]; then
+  touch $log_file_alert
+fi
 
 $router_ssh "/ip firewall address-list print where list=$router_stage1" | awk 'NR > 2 {print $4}' >> "$file"
 
@@ -42,20 +48,9 @@ do
     if echo "$domain" | egrep -i "(^|[^a-zA-Z])(shodan|stretchoid|shadowserver|ezotech|alphastrike|censys|onyphe|binaryedge|caacbook|onlineprism|internet-census|netsystemsresearch|scan.*)($|[^a-zA-Z])" > /dev/null
     then
         $router_ssh -n "do { /ip firewall address-list add list=$router_blacklist comment=$domain address=$ip } on-error={}"
-        echo "Host $ip with PTR $domain was added to the blacklist on the remote device."
-        if [[ -f $log_file  ]]; then
-          echo -e $(date +%Y-%m-%d) $ip"\t\t"$ptr >> $log_file
-        else
-          touch $log_file
-          echo -e $(date +%Y-%m-%d) $ip"\t\t"$ptr >> $log_file
-        fi
+        echo -e $(date +%Y-%m-%d) $ip"\t\t"$ptr >> $log_file
     else
-        if [[ -f $log_file_alert  ]]; then
-          echo -e $(date +%Y-%m-%d) $ip "\t\t"$ptr >> $log_file_alert
-        else
-          touch $log_file_alert
-          echo -e $(date +%Y-%m-%d) $ip "\t\t"$ptr >> $log_file_alert
-        fi
-    fi
+        echo -e $(date +%Y-%m-%d) $ip "\t\t"$ptr >> $log_file_alert
+     fi
   fi
 done < "$file"
